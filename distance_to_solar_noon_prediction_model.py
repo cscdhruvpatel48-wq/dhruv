@@ -12,7 +12,6 @@ import pandas as pd
 import joblib
 
 model = joblib.load("Distance to Solar Noon_prediction_model.pkl")
-encoder = joblib.load("label_encoder.pkl")
 
 st.title("Solar Power Prediction App")
 st.write("Predict Distance to Solar Noon")
