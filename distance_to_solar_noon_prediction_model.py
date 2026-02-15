@@ -26,7 +26,7 @@ day = st.number_input("Day", 1, 31)
 
 first_hour = st.number_input("First Hour of Period", 0, 23)
 
-is_daylight = st.selectbox("Is Daylight", encoder["Is Daylight"].classes_)
+is_daylight = st.selectbox("Is Daylight")
 
 avg_temp = st.number_input("Average Temperature (Day)")
 avg_wind_dir = st.number_input("Average Wind Direction (Day)")
