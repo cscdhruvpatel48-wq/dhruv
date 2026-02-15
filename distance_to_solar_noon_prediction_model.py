@@ -11,34 +11,43 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+# Load trained model
 model = joblib.load("Distance to Solar Noon_prediction_model.pkl")
 
-st.title("Solar Power Prediction App")
+st.title("☀️ Solar Power Prediction App")
 st.write("Predict Distance to Solar Noon")
 
 st.subheader("Enter Input Values")
 
+# ----------------------------
+# User Inputs
+# ----------------------------
 
-day_of_year = st.number_input("Day of Year", 1, 366)
-year = st.number_input("Year", 2000, 2100)
-month = st.number_input("Month", 1, 12)
-day = st.number_input("Day", 1, 31)
+day_of_year = st.number_input("Day of Year", min_value=1, max_value=366, value=1)
+year = st.number_input("Year", min_value=2000, max_value=2100, value=2024)
+month = st.number_input("Month", min_value=1, max_value=12, value=1)
+day = st.number_input("Day", min_value=1, max_value=31, value=1)
 
-first_hour = st.number_input("First Hour of Period", 0, 23)
+first_hour = st.number_input("First Hour of Period", min_value=0, max_value=23, value=0)
 
-is_daylight = st.selectbox("Is Daylight")
+# Fixed Selectbox
+is_daylight = st.selectbox("Is Daylight?", ["Yes", "No"])
+is_daylight = 1 if is_daylight == "Yes" else 0
 
-avg_temp = st.number_input("Average Temperature (Day)")
-avg_wind_dir = st.number_input("Average Wind Direction (Day)")
-avg_wind_speed_day = st.number_input("Average Wind Speed (Day)")
-sky_cover = st.number_input("Sky Cover")
-visibility = st.number_input("Visibility")
-rel_humidity = st.number_input("Relative Humidity")
+avg_temp = st.number_input("Average Temperature (Day)", value=25.0)
+avg_wind_dir = st.number_input("Average Wind Direction (Day)", value=180.0)
+avg_wind_speed_day = st.number_input("Average Wind Speed (Day)", value=10.0)
+sky_cover = st.number_input("Sky Cover", value=5.0)
+visibility = st.number_input("Visibility", value=10.0)
+rel_humidity = st.number_input("Relative Humidity", value=50.0)
 
-avg_wind_speed_period = st.number_input("Average Wind Speed (Period)")
-avg_pressure = st.number_input("Average Barometric Pressure (Period)")
-power_generated = st.number_input("Power Generated")
+avg_wind_speed_period = st.number_input("Average Wind Speed (Period)", value=8.0)
+avg_pressure = st.number_input("Average Barometric Pressure (Period)", value=1013.0)
+power_generated = st.number_input("Power Generated", value=500.0)
 
+# ----------------------------
+# Create DataFrame
+# ----------------------------
 
 df = pd.DataFrame({
     "Day of Year": [day_of_year],
@@ -58,12 +67,13 @@ df = pd.DataFrame({
     "Power Generated": [power_generated]
 })
 
-
-for col in encoder:
-    if col in df.columns:
-        df[col] = encoder[col].transform(df[col])
-
+# ----------------------------
+# Prediction
+# ----------------------------
 
 if st.button("Predict"):
-    prediction = model.predict(df)
-    st.success(f"Predicted Distance to Solar Noon: {prediction[0]:.2f}")
+    try:
+        prediction = model.predict(df)
+        st.success(f"Predicted Distance to Solar Noon: {prediction[0]:.2f}")
+    except Exception as e:
+        st.error(f"Error during prediction: {e}")
